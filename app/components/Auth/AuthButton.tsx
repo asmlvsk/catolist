@@ -1,5 +1,6 @@
 "use client";
 
+import { getURL } from "@/app/lib/baseUrl";
 import GoogleIcon from "@/app/lib/icons";
 import { Button } from "@nextui-org/react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -12,7 +13,7 @@ export default function AuthButton() {
     supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: getURL(),
       },
     });
   };
