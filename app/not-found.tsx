@@ -3,10 +3,11 @@ import Link from "next/link";
 import React from "react";
 import cat404 from "../public/404cat.png";
 import Navigation from "./components/Navbar/Navigation";
-import { supabase } from "./lib/supabaseServer";
 import { Button } from "@nextui-org/react";
+import { createServerSupabaseClient } from "./lib/supabaseServer";
 
 export default async function NotFound() {
+  const supabase = createServerSupabaseClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();

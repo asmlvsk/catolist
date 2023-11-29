@@ -1,15 +1,14 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import React from "react";
 import Navigation from "@/app/components/Navbar/Navigation";
 import { tierToNumber } from "@/app/lib/ranks";
 import { CombinedDataType } from "@/app/global";
 import { DataList } from "../DataList";
+import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
 
 type Props = {};
 
 export default async function MyList({}: Props) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerSupabaseClient();
 
   const {
     data: { session },

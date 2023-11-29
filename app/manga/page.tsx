@@ -1,17 +1,23 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import {
+  createRouteHandlerClient,
+  createServerComponentClient,
+} from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import CustomPagination from "../components/Pagination";
 import SearchAnime from "../components/Search/SearchInput";
-import { supabase } from "../lib/supabaseServer";
 import Navigation from "../components/Navbar/Navigation";
 import CardItem from "../components/Cards/CardItem";
 import { JikanAnimeData, JikanPagination } from "../types/jikanAPITypes";
+import { createServerSupabaseClient } from "../lib/supabaseServer";
 
 export default async function page({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const cookieStore = cookies();
+  const supabase = createServerSupabaseClient();
+
   const {
     data: { session },
   } = await supabase.auth.getSession();

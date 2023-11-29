@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
 import React from "react";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import CustomButton from "../components/CustomButton";
+import { createServerSupabaseClient } from "../lib/supabaseServer";
 
 export default async function Unauthenticated() {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerSupabaseClient();
 
   const {
     data: { session },

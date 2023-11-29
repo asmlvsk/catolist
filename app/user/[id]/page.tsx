@@ -1,7 +1,5 @@
 import CustomButton from "@/app/components/CustomButton";
 import Navigation from "@/app/components/Navbar/Navigation";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -9,6 +7,7 @@ import animeImg from "../../../public/anime_choose.png";
 import mangaImg from "../../../public/manga_choose.jpg";
 import Title from "@/app/components/Title";
 import { mohaveFont } from "@/app/lib/fonts";
+import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
 
 export default async function UserAnime({
   params: { id },
@@ -17,7 +16,7 @@ export default async function UserAnime({
 }) {
   const userId = id;
 
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerSupabaseClient();
 
   const {
     data: { session },

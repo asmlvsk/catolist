@@ -4,8 +4,8 @@ import PublicTierCard from "@/app/components/TierCard/PublicTierCard";
 import Title from "@/app/components/Title";
 import { CombinedDataType } from "@/app/global";
 import { tierToNumber } from "@/app/lib/ranks";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies, headers } from "next/headers";
+import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
+import { headers } from "next/headers";
 import Link from "next/link";
 import React from "react";
 import { getSelectorsByUserAgent } from "react-device-detect";
@@ -21,8 +21,7 @@ export default async function UserAnime({
     headers().get("user-agent") ?? ""
   );
 
-  // const supabase = createClientComponentClient();
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServerSupabaseClient();
 
   const {
     data: { session },

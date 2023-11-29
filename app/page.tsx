@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Landing from "./components/Landing";
 import Navigation from "./components/Navbar/Navigation";
-import { supabase } from "./lib/supabaseServer";
+import { createServerSupabaseClient } from "./lib/supabaseServer";
 
 export default async function Home() {
+  const supabase = createServerSupabaseClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();

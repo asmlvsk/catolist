@@ -3,11 +3,13 @@ import animeImg from "../../public/anime_choose.png";
 import mangaImg from "../../public/manga_choose.jpg";
 import Image from "next/image";
 import Link from "next/link";
-import { supabase } from "../lib/supabaseServer";
 import { Auth } from "./Auth/Auth";
 import { mohaveFont } from "../lib/fonts";
+import { createServerSupabaseClient } from "../lib/supabaseServer";
 
 const Landing = async () => {
+  const supabase = createServerSupabaseClient();
+
   const {
     data: { session },
   } = await supabase.auth.getSession();

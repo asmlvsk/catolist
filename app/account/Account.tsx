@@ -1,12 +1,14 @@
 import { Toaster } from "sonner";
 import { Auth } from "../components/Auth/Auth";
 import Navigation from "../components/Navbar/Navigation";
-import { supabase } from "../lib/supabaseServer";
 import ProfileFields from "./ProfileFields";
 import LinkToBtn from "./LinkToBtn";
 import Title from "../components/Title";
+import { createServerSupabaseClient } from "../lib/supabaseServer";
 
 export default async function AccountForm() {
+  const supabase = createServerSupabaseClient();
+
   const {
     data: { session },
   } = await supabase.auth.getSession();
