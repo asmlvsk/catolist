@@ -2,7 +2,7 @@
 
 import type { Session, SupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { createContext, useContext, useState, useEffect } from "react";
-import { supabase } from "./lib/supabaseClient";
+import { createSupabaseClient } from "./lib/supabaseClient";
 
 type MaybeSession = Session | null;
 
@@ -25,7 +25,7 @@ export default function SupabaseProvider({
   const [userDetails, setUserDetails] = useState<Profile | null>(null);
   const [userSession, setUserSession] = useState<Session | null>(null);
   const [isLoading, setLoading] = useState(false);
-
+  const supabase = createSupabaseClient();
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {

@@ -19,7 +19,7 @@ export default async function AccountForm() {
     .eq("id", session?.user?.id!)
     .single();
 
-  const base = process.env.NEXT_PUBLIC_BASE_URL;
+  const base = process.env.NEXT_PUBLIC_SITE_URL;
 
   const linkToList = base + `/user/${session?.user.id}`;
 
