@@ -37,9 +37,7 @@ const CheckButton = ({ item }: Props) => {
           title,
           image_url,
         }).then((val) => {
-          val?.status === 200
-            ? toast.success(val?.message)
-            : toast.error(val?.error);
+          toast.error(val?.error);
         });
       } else {
         const response = await addMangaToFav({
@@ -47,9 +45,7 @@ const CheckButton = ({ item }: Props) => {
           title,
           image_url,
         }).then((val) => {
-          val?.status === 200
-            ? toast.success(val?.message)
-            : toast.error(val?.error);
+          toast.error(val?.error);
         });
       }
       setLastCallTime(currentTime);

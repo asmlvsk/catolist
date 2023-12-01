@@ -47,22 +47,24 @@ const AddButton = ({ item }: Props) => {
           title,
           image_url,
           tier,
-        }).then((val) => {
-          val?.status === 200
-            ? toast.success(val?.message)
-            : toast.error(val?.error);
-        });
+        })
+          .then((val) => {
+            toast.success(val?.message);
+          })
+          .catch((error) => toast.error(error));
       } else {
         const response = await addMangaToFav({
           title_id,
           title,
           image_url,
           tier,
-        }).then((val) => {
-          val?.status === 201
-            ? toast.success(val?.message)
-            : toast.error(val?.error);
-        });
+        })
+          .then((val) => {
+            val?.status === 201
+              ? toast.success(val?.message)
+              : toast.error(val?.error);
+          })
+          .catch((error) => toast.error(error));
       }
       setLastCallTime(currentTime);
     } else {
