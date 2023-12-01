@@ -34,7 +34,7 @@ export default async function UserAnime({
       <Navigation session={session} />
       {profile && (session?.user.id === profile.id || !profile.private) ? (
         <>
-          <div className="flex gap-8 justify-center pt-10 flex-col items-center text-center">
+          <div className="flex gap-8 justify-center pt-10 flex-col items-center text-center max-lg:pt-5 max-lg:pb-5">
             <Title text={`${profile?.nickname}'s lists`} />
             <div className="flex gap-5 max-md:flex-col">
               <ImageCard
