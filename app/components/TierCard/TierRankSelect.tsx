@@ -3,7 +3,8 @@ import { updateAnime } from "@/actions/update-anime-in-fav";
 import { updateManga } from "@/actions/update-manga-in-fav";
 import { CombinedDataType } from "@/app/global";
 import { ranks } from "@/app/lib/ranks";
-import { supabase } from "@/app/lib/supabaseClient";
+import { createSupabaseClient } from "@/app/lib/supabaseClient";
+import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
 import { Select, SelectItem } from "@nextui-org/react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ export default function TierRankSelect({ item }: { item: CombinedDataType }) {
   const router = useRouter();
   const pathname = usePathname();
   const isAnimePage = pathname?.startsWith("/mylist/anime");
+  const supabase = createSupabaseClient();
   useEffect(() => {
     const channel = supabase
       .channel("anime changes")
