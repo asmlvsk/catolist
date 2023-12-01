@@ -2,7 +2,7 @@ import {
   createRouteHandlerClient,
   createServerComponentClient,
 } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import React from "react";
 import Navigation from "@/app/components/Navbar/Navigation";
 import { CombinedDataType } from "@/app/global";
@@ -13,10 +13,7 @@ import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
 type Props = {};
 
 export default async function MyList({}: Props) {
-  const cookieStore = cookies();
   const supabase = createServerSupabaseClient();
-  // const supabase = createServerComponentClient<Database>({ cookies });
-
   const {
     data: { session },
   } = await supabase.auth.getSession();

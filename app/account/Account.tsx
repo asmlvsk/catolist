@@ -5,6 +5,7 @@ import ProfileFields from "./ProfileFields";
 import LinkToBtn from "./LinkToBtn";
 import Title from "../components/Title";
 import { createServerSupabaseClient } from "../lib/supabaseServer";
+import { headers } from "next/headers";
 
 export default async function AccountForm() {
   const supabase = createServerSupabaseClient();
@@ -19,7 +20,8 @@ export default async function AccountForm() {
     .eq("id", session?.user?.id!)
     .single();
 
-  const base = process.env.NEXT_PUBLIC_SITE_URL;
+  const origin = headers().get("host");
+  const base = origin;
 
   const linkToList = base + `/user/${session?.user.id}`;
 
