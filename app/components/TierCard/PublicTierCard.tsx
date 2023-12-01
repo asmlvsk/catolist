@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import EditSection from "./EditTierCard";
 import { rgbaTierColor, tierColor } from "@/app/lib/tierColor";
-import TierRankSelect from "./TierRankSelect";
-import { DeleteAnime } from "./DeleteAnime";
 import { josefin, mohaveFont } from "@/app/lib/fonts";
 import { CombinedDataType } from "@/app/global";
 import Modal from "../Modal";

@@ -1,5 +1,4 @@
-import Image from "next/image";
-import Landing from "./components/Landing";
+import Landing from "./landing/Landing";
 import Navigation from "./components/Navbar/Navigation";
 import { createServerSupabaseClient } from "./lib/supabaseServer";
 

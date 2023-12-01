@@ -8,6 +8,7 @@ import mangaImg from "../../../public/manga_choose.jpg";
 import Title from "@/app/components/Title";
 import { mohaveFont } from "@/app/lib/fonts";
 import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
+import ImageCard from "@/app/components/ImageCard";
 
 export default async function UserAnime({
   params: { id },
@@ -33,37 +34,19 @@ export default async function UserAnime({
       <Navigation session={session} />
       {profile && (session?.user.id === profile.id || !profile.private) ? (
         <>
-          <div className="flex gap-8 justify-center pt-10 flex-col items-center">
+          <div className="flex gap-8 justify-center pt-10 flex-col items-center text-center">
             <Title text={`${profile?.nickname}'s lists`} />
             <div className="flex gap-5 max-md:flex-col">
-              <Link href={`/user/${userId}/anime`}>
-                <div className="h-[450px] w-[450px] relative border rounded-3xl items-center justify-center text-center flex max-lg:h-[350px] max-lg:w-[350px]">
-                  <Image
-                    src={animeImg}
-                    alt="My anime list"
-                    fill
-                    style={{ objectFit: "contain" }}
-                    className="brightness-50"
-                  />
-                  <h2 className={`text-4xl z-30 ${mohaveFont.className}`}>
-                    Anime library
-                  </h2>
-                </div>
-              </Link>
-              <Link href={`/user/${userId}/manga`}>
-                <div className="h-[450px] w-[450px] relative border rounded-3xl items-center justify-center text-center flex max-lg:h-[350px] max-lg:w-[350px]">
-                  <Image
-                    src={mangaImg}
-                    alt="My manga list"
-                    fill
-                    style={{ objectFit: "contain" }}
-                    className="brightness-50"
-                  />
-                  <h2 className={`text-4xl z-30 ${mohaveFont.className}`}>
-                    Manga library
-                  </h2>
-                </div>
-              </Link>
+              <ImageCard
+                imageSrc={animeImg}
+                title="Anime library"
+                linkTo={`/user/${userId}/anime`}
+              />
+              <ImageCard
+                imageSrc={mangaImg}
+                title="Manga library"
+                linkTo={`/user/${userId}/manga`}
+              />
             </div>
           </div>
         </>

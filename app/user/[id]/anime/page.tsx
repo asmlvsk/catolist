@@ -72,7 +72,7 @@ export default async function UserAnime({
       <Navigation session={session} />
       {profile && (session?.user.id === profile.id || !profile.private) ? (
         <>
-          <Title wrapped text={`${profile?.nickname}'s list`} />
+          <Title wrapped text={`${profile?.nickname}'s anime list`} />
           <div className="flex flex-col gap-4 my-8 mx-10 max-lg:mx-2">
             {combinedData?.map((item: CombinedDataType) => (
               <div className="max-lg:px-[5%] max-lg:gap-5" key={item.id}>
