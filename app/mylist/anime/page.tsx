@@ -1,62 +1,37 @@
-import {
-  createRouteHandlerClient,
-  createServerComponentClient,
-} from "@supabase/auth-helpers-nextjs";
-import { cookies, headers } from "next/headers";
 import React from "react";
 import Navigation from "@/app/components/Navbar/Navigation";
-import { CombinedDataType } from "@/app/global";
-import { tierToNumber } from "@/app/lib/ranks";
 import { DataList } from "../DataList";
 import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
+import { QueryData } from "@supabase/supabase-js";
+import { searchingAction } from "@/actions/search-action";
 
-type Props = {};
+type Props = {
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
-export default async function MyList({}: Props) {
+export default async function MyList({ searchParams }: Props) {
   const supabase = createServerSupabaseClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data: userData } = await supabase
-    .from("user_anime")
-    .select("anime_id")
-    .eq("user_id", session?.user.id!);
+  const combinedData = await searchingAction(
+    session,
+    "anime",
+    searchParams.search as string,
+    searchParams.bytier as string,
+    searchParams.ordername as string
+  );
 
-  const animeIds = userData?.map((entry) => entry.anime_id) || [];
+  type CombinedDataType = QueryData<typeof combinedData>;
 
-  // Тепер отримуємо список аніме на основі цих IDs
-  const { data: animeData } = await supabase
-    .from("anime")
-    .select("*")
-    .in("title_id", animeIds);
-
-  const { data: animeReviews } = await supabase
-    .from("user_anime")
-    .select("*")
-    .order("tier", { ascending: false })
-    .eq("user_id", session?.user.id!);
-
-  const combinedData: CombinedDataType[] | undefined = animeData
-    ?.map((anime) => {
-      const reviewForAnime = animeReviews?.find(
-        (review) => review.anime_id === anime.title_id
-      );
-      return {
-        ...anime,
-        id: reviewForAnime?.id,
-        review_text: reviewForAnime?.review_text || null,
-        tier: reviewForAnime?.tier || null,
-      };
-    })
-    .sort((a, b) => {
-      return tierToNumber(b.tier) - tierToNumber(a.tier);
-    });
+  const typedCombinedData: CombinedDataType[] =
+    combinedData.data as CombinedDataType[];
 
   return (
     <>
       <Navigation session={session} />
-      <DataList data={combinedData} infoType="anime" />
+      <DataList data={typedCombinedData} infoType="anime" />
     </>
   );
 }

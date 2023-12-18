@@ -81,7 +81,7 @@ export default async function UserAnime({
               <Button color="primary">Go back</Button>
             </Link>
           </div>
-          <div className="flex flex-col gap-4 my-8 mx-10 max-lg:mx-2">
+          <div className="flex flex-col gap-4 my-8 mx-48 max-lg:mx-2">
             {combinedData && combinedData.length === 0 ? (
               <EmptyArraySection
                 linkTo={`/user/${userId}`}

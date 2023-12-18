@@ -24,9 +24,7 @@ export type CombinedDataType = {
   id: string | undefined;
   review_text: string | null;
   tier: "D" | "C" | "B" | "A" | "S" | null;
-  created_at: string;
   image_url: string | null;
   title: string | null;
   title_id: number;
-  updated_at: string | null;
 };
