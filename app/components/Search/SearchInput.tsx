@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { Input } from "@nextui-org/react";
@@ -14,14 +14,28 @@ export default function SearchAnime() {
   const searchParams = useSearchParams();
   const search = searchParams?.get("search");
 
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
   const handleOptionChange = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push(`${pathname}?search=${selectedValue}`);
+    router.push(
+      pathname + "?" + createQueryString("search", selectedValue as string)
+    );
   };
 
   const handleSearch = () => {
     if (selectedValue) {
-      router.push(`${pathname}?search=${selectedValue}`);
+      router.push(
+        pathname + "?" + createQueryString("search", selectedValue as string)
+      );
     }
   };
 
@@ -33,13 +47,13 @@ export default function SearchAnime() {
 
   const handleClearSearch = () => {
     setSelectedValue("");
-    router.push(`${pathname}`);
+    router.push(pathname + "?" + createQueryString("search", ""));
   };
 
   return (
     <form
       onSubmit={handleOptionChange}
-      className="mt-10 w-1/2 max-md:w-full max-md:px-4"
+      className="w-1/2 max-md:w-full max-md:px-4"
     >
       <Input
         type="text"

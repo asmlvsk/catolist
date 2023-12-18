@@ -1,3 +1,4 @@
+import { searchingAction } from "@/actions/search-action";
 import CustomButton from "@/app/components/CustomButton";
 import { EmptyArraySection } from "@/app/components/EmptyArraySection";
 import Navigation from "@/app/components/Navbar/Navigation";
@@ -8,6 +9,7 @@ import { tierToNumber } from "@/app/lib/ranks";
 import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/solid";
 import { Button } from "@nextui-org/react";
+import { QueryData } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import Link from "next/link";
 import React from "react";
@@ -15,8 +17,10 @@ import { getSelectorsByUserAgent } from "react-device-detect";
 
 export default async function UserAnime({
   params: { id },
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const userId = id;
 
@@ -36,40 +40,12 @@ export default async function UserAnime({
     status,
   } = await supabase.from("profile").select("*").eq("id", userId).single();
 
-  const { data: userMangaIds } = await supabase
-    .from("user_manga")
-    .select("manga_id")
-    .eq("user_id", session?.user.id!);
+  const combinedData = await searchingAction(userId, "manga", searchParams);
 
-  const mangaIds = userMangaIds?.map((entry) => entry.manga_id) || [];
+  type CombinedData = QueryData<typeof combinedData>;
 
-  // Тепер отримуємо список аніме на основі цих IDs
-  const { data: mangaData } = await supabase
-    .from("manga")
-    .select("*")
-    .in("title_id", mangaIds);
-
-  const { data: userManga } = await supabase
-    .from("user_manga")
-    .select("*")
-    .order("tier", { ascending: false })
-    .eq("user_id", session?.user.id!);
-
-  const combinedData: CombinedDataType[] | undefined = mangaData
-    ?.map((manga) => {
-      const mangaData = userManga?.find(
-        (review) => review.manga_id === manga.title_id
-      );
-      return {
-        ...manga,
-        id: mangaData?.id,
-        review_text: mangaData?.review_text || null,
-        tier: mangaData?.tier || null,
-      };
-    })
-    .sort((a, b) => {
-      return tierToNumber(b.tier) - tierToNumber(a.tier);
-    });
+  const typedCombinedData: CombinedDataType[] =
+    combinedData.data as CombinedData[];
 
   return (
     <>
@@ -82,8 +58,8 @@ export default async function UserAnime({
               <Button color="primary">Go back</Button>
             </Link>
           </div>
-          <div className="flex flex-col gap-4 my-8 mx-10 max-lg:mx-2">
-            {combinedData && combinedData.length === 0 ? (
+          <div className="flex flex-col gap-4 my-8 mx-48 max-lg:mx-2">
+            {typedCombinedData && typedCombinedData.length === 0 ? (
               <EmptyArraySection
                 linkTo={`/user/${userId}`}
                 emptyTitle="User doesn't have list yet."
@@ -91,7 +67,7 @@ export default async function UserAnime({
                 icon={<ArrowUturnLeftIcon width={60} height={60} />}
               />
             ) : (
-              combinedData?.map((item: CombinedDataType) => (
+              typedCombinedData?.map((item: CombinedDataType) => (
                 <div className="max-lg:px-[5%] max-lg:gap-5" key={item.id}>
                   <PublicTierCard item={item} isMobile={isMobile} />
                 </div>

@@ -8,6 +8,10 @@ import Link from "next/link";
 import React from "react";
 import { getSelectorsByUserAgent } from "react-device-detect";
 import { EmptyArraySection } from "../components/EmptyArraySection";
+import FilterSelect from "../components/FilterSelect";
+import { sortBy } from "../lib/selectFilterCases";
+import { ranks } from "../lib/ranks";
+import SearchAnime from "../components/Search/SearchInput";
 
 type Props = {
   data?: CombinedDataType[];
@@ -30,7 +34,14 @@ export const DataList = ({ data, infoType }: Props) => {
           />
         </Link>
       </div>
-      <div className="flex flex-col gap-4 my-8 mx-10">
+      <div className="flex justify-between items-center px-56 pt-10 gap-5 max-lg:px-[5%]">
+        <SearchAnime />
+        <div className="w-[20%] flex gap-2">
+          <FilterSelect items={sortBy} label="Sort" param="ordername" />
+          <FilterSelect items={ranks} label="Filter" param="bytier" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 my-8 mx-48">
         {data && data.length === 0 ? (
           <EmptyArraySection
             linkTo={`/${infoType}`}
