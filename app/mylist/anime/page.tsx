@@ -16,11 +16,9 @@ export default async function MyList({ searchParams }: Props) {
   } = await supabase.auth.getSession();
 
   const combinedData = await searchingAction(
-    session,
+    session?.user.id!,
     "anime",
-    searchParams.search as string,
-    searchParams.bytier as string,
-    searchParams.ordername as string
+    searchParams
   );
 
   type CombinedDataType = QueryData<typeof combinedData>;

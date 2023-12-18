@@ -3,17 +3,16 @@ import {
   selectedOrderName,
 } from "@/app/lib/selectFilterCases";
 import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
-import { Session } from "@supabase/supabase-js";
 
 export const searchingAction = async (
-  session: Session | null,
+  userId: string,
   table: string,
-  phrase?: string,
-  bytier?: string,
-  ordername?: string
+  searchParams?: { [key: string]: string | string[] | undefined }
 ) => {
   const supabase = createServerSupabaseClient();
-  const extractedOrderName = extractOrderSubstring(ordername as string);
+  const extractedOrderName = extractOrderSubstring(
+    searchParams?.ordername as string
+  );
   let query = supabase
     .from(`user_${table}`)
     .select(
@@ -28,23 +27,27 @@ export const searchingAction = async (
         )
       `
     )
-    .eq("user_id", session?.user.id!);
+    .eq("user_id", userId);
 
-  if (bytier) {
-    query = query.filter("tier", "eq", bytier);
+  if (searchParams?.bytier) {
+    query = query.filter("tier", "eq", searchParams?.bytier);
   }
 
-  if (phrase) {
-    query = query.filter(`${table}.title`, "ilike", `%${phrase}%`);
+  if (searchParams?.search) {
+    query = query.filter(
+      `${table}.title`,
+      "ilike",
+      `%${searchParams?.search}%`
+    );
   }
 
   if (extractedOrderName === "title") {
     query = query.order(`${table}(${extractedOrderName})`, {
-      ascending: selectedOrderName(ordername as string),
+      ascending: selectedOrderName(searchParams?.ordername as string),
     });
   } else if (extractedOrderName === "tier") {
     query = query.order(`${extractedOrderName}`, {
-      ascending: selectedOrderName(ordername as string),
+      ascending: selectedOrderName(searchParams?.ordername as string),
     });
   } else {
     query = query.order("tier", { ascending: false });

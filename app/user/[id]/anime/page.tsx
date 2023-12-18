@@ -1,13 +1,18 @@
+import { searchingAction } from "@/actions/search-action";
 import CustomButton from "@/app/components/CustomButton";
 import { EmptyArraySection } from "@/app/components/EmptyArraySection";
+import FilterSelect from "@/app/components/FilterSelect";
 import Navigation from "@/app/components/Navbar/Navigation";
+import SearchAnime from "@/app/components/Search/SearchInput";
 import PublicTierCard from "@/app/components/TierCard/PublicTierCard";
 import Title from "@/app/components/Title";
 import { CombinedDataType } from "@/app/global";
-import { tierToNumber } from "@/app/lib/ranks";
+import { ranks, tierToNumber } from "@/app/lib/ranks";
+import { sortBy } from "@/app/lib/selectFilterCases";
 import { createServerSupabaseClient } from "@/app/lib/supabaseServer";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/solid";
 import { Button } from "@nextui-org/react";
+import { QueryData } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import Link from "next/link";
 import React from "react";
@@ -15,8 +20,10 @@ import { getSelectorsByUserAgent } from "react-device-detect";
 
 export default async function UserAnime({
   params: { id },
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const userId = id;
 
@@ -41,35 +48,12 @@ export default async function UserAnime({
     status,
   } = await supabase.from("profile").select("*").eq("id", userId).single();
 
-  const animeIds = userData?.map((entry) => entry.anime_id) || [];
+  const combinedData = await searchingAction(userId, "anime", searchParams);
 
-  // Тепер отримуємо список аніме на основі цих IDs
-  const { data: animeData } = await supabase
-    .from("anime")
-    .select("*")
-    .in("title_id", animeIds);
+  type CombinedData = QueryData<typeof combinedData>;
 
-  const { data: animeReviews } = await supabase
-    .from("user_anime")
-    .select("*")
-    .order("tier", { ascending: false })
-    .eq("user_id", userId);
-
-  const combinedData: CombinedDataType[] | undefined = animeData
-    ?.map((anime) => {
-      const reviewForAnime = animeReviews?.find(
-        (review) => review.anime_id === anime.title_id
-      );
-      return {
-        ...anime,
-        id: reviewForAnime?.id,
-        review_text: reviewForAnime?.review_text || null,
-        tier: reviewForAnime?.tier || null,
-      };
-    })
-    .sort((a, b) => {
-      return tierToNumber(b.tier) - tierToNumber(a.tier);
-    });
+  const typedCombinedData: CombinedDataType[] =
+    combinedData.data as CombinedData[];
   return (
     <>
       <Navigation session={session} />
@@ -81,8 +65,15 @@ export default async function UserAnime({
               <Button color="primary">Go back</Button>
             </Link>
           </div>
+          <div className="flex justify-between items-center px-56 pt-10 gap-5 max-lg:px-[5%]">
+            <SearchAnime />
+            <div className="w-[20%] flex gap-2">
+              <FilterSelect items={sortBy} label="Sort" param="ordername" />
+              <FilterSelect items={ranks} label="Filter" param="bytier" />
+            </div>
+          </div>
           <div className="flex flex-col gap-4 my-8 mx-48 max-lg:mx-2">
-            {combinedData && combinedData.length === 0 ? (
+            {typedCombinedData && typedCombinedData.length === 0 ? (
               <EmptyArraySection
                 linkTo={`/user/${userId}`}
                 emptyTitle="User doesn't have list yet."
@@ -90,7 +81,7 @@ export default async function UserAnime({
                 icon={<ArrowUturnLeftIcon width={60} height={60} />}
               />
             ) : (
-              combinedData?.map((item: CombinedDataType) => (
+              typedCombinedData?.map((item: CombinedDataType) => (
                 <div className="max-lg:px-[5%] max-lg:gap-5" key={item.id}>
                   <PublicTierCard item={item} isMobile={isMobile} />
                 </div>
