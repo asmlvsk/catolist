@@ -10,12 +10,19 @@ type Props = {
 };
 
 export default function CardSelectRank({ setRank }: Props) {
+  const handleTierChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === "") {
+      setRank(null);
+    } else {
+      setRank(e.target.value as TierEnum | null);
+    }
+  };
   return (
     <Select
       label="Select a rank"
       className="max-w-xs"
       variant="bordered"
-      onChange={(e) => setRank(e.target.value as TierEnum | null)}
+      onChange={handleTierChange}
     >
       {ranks.map((rank) => (
         <SelectItem key={rank.value} value={rank.value}>
